@@ -48,7 +48,7 @@ const App = () => (
               
               
               <Route path="/" element={<Layout><Dashboard /></Layout>} />
-                          
+              <Route path="/products" element={<Layout><Products /></Layout>} />
               <Route path="/sales" element={<Layout><Sales /></Layout>} />
               <Route path="/reports" element={<Layout><Reports /></Layout>} />
               <Route path="/customers" element={<Layout><Customers /></Layout>} />
@@ -63,9 +63,12 @@ const App = () => (
               <Route path="/suppliers" element={<Layout><Suppliers /></Layout>} />
               <Route path="/employees" element={<Layout><Employees /></Layout>} />
               <Route path="/invoices" element={<Layout><Invoices /></Layout>} />
-                     
+              <Route path="/assets" element={<Layout><Assets /></Layout>} />
+              <Route path="/cash-management" element={<Layout><CashManagement /></Layout>} />
+              
+              
               <Route path="/settings" element={<Layout><Settings /></Layout>} />
-           
+              <Route path="/user-management" element={<Layout><UserManagement /></Layout>} />
               
               <Route path="*" element={<NotFound />} />
             </Routes>

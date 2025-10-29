@@ -54,32 +54,24 @@ class ExternalServerClient {
       return await response.json();
     } catch (error) {
       console.error('Erro ao salvar no banco externo:', error);
-      // Fallback para localStorage se servidor não estiver disponível
-      const key = `external_${entityName}`;
-      const stored = localStorage.getItem(key);
-      const items = stored ? JSON.parse(stored) : [];
-      items.push({ ...data, id: data?.id || Date.now().toString(), synced: false });
-      localStorage.setItem(key, JSON.stringify(items));
-      return data;
+      throw error;
     }
   }
 
-  // Buscar dados do banco externo
-  async getFromExternalDatabase(entityName: string): Promise<any[]> {
+  // Buscar todos os dados do banco externo
+  async getAll<T>(entityName: string): Promise<T[]> {
     try {
       const response = await fetch(`${DATABASE_PATH}/${entityName}`);
       
       if (!response.ok) {
-        throw new Error(`Erro ao buscar do banco externo: ${response.statusText}`);
+        throw new Error(`Erro ao buscar todos os dados de ${entityName}: ${response.statusText}`);
       }
       
       return await response.json();
     } catch (error) {
-      console.error('Erro ao buscar do banco externo:', error);
-      // Fallback para localStorage se servidor não estiver disponível
-      const key = `external_${entityName}`;
-      const stored = localStorage.getItem(key);
-      return stored ? JSON.parse(stored) : [];
+      console.error(`Erro ao buscar ${entityName} do banco externo:`, error);
+      // Lançar o erro para que o react-query possa lidar com ele
+      throw error;
     }
   }
 
@@ -101,15 +93,7 @@ class ExternalServerClient {
       return await response.json();
     } catch (error) {
       console.error('Erro ao atualizar no banco externo:', error);
-      // Fallback para localStorage
-      const key = `external_${entityName}`;
-      const stored = localStorage.getItem(key);
-      const items = stored ? JSON.parse(stored) : [];
-      const updated = items.map((item: any) => 
-        item.id === id ? { ...item, ...data, synced: false } : item
-      );
-      localStorage.setItem(key, JSON.stringify(updated));
-      return data;
+      throw error;
     }
   }
 
@@ -125,12 +109,7 @@ class ExternalServerClient {
       }
     } catch (error) {
       console.error('Erro ao deletar do banco externo:', error);
-      // Fallback para localStorage
-      const key = `external_${entityName}`;
-      const stored = localStorage.getItem(key);
-      const items = stored ? JSON.parse(stored) : [];
-      const filtered = items.filter((item: any) => item.id !== id);
-      localStorage.setItem(key, JSON.stringify(filtered));
+      throw error;
     }
   }
 
@@ -165,36 +144,15 @@ class ExternalServerClient {
       console.log('Backup criado com sucesso:', timestamp);
     } catch (error) {
       console.error('Erro ao criar backup:', error);
-      // Salvar backup localmente como fallback
-      const backupKey = `backup_${timestamp}`;
-      localStorage.setItem(backupKey, JSON.stringify(backupData));
+      throw error;
     }
   }
 
   // Sincronizar dados não sincronizados
   async syncPendingData(): Promise<void> {
-    const entities = ['cash_movements', 'users', 'marketplace_orders'];
-    
-    for (const entity of entities) {
-      const key = `external_${entity}`;
-      const stored = localStorage.getItem(key);
-      if (!stored) continue;
-
-      const items = JSON.parse(stored);
-      const pending = items.filter((item: any) => item.synced === false);
-
-      for (const item of pending) {
-        try {
-          await this.saveToExternalDatabase(entity, item);
-          // Marcar como sincronizado
-          item.synced = true;
-        } catch (error) {
-          console.error(`Erro ao sincronizar ${entity}:`, error);
-        }
-      }
-
-      localStorage.setItem(key, JSON.stringify(items));
-    }
+    // Esta função não é mais necessária, pois removemos o fallback para localStorage
+    // e o react-query lida com a sincronização de estado.
+    return;
   }
 }
 
