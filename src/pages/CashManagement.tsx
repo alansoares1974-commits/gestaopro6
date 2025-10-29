@@ -42,14 +42,14 @@ export default function CashManagement() {
 
   // Buscar movimentos do servidor externo
   const { data: movements = [], isLoading } = useQuery({
-    queryKey: ['cash_movements'],
-    queryFn: () => externalServer.getAll<CashMovement>('cash_movements'),
+    queryKey: ['cash_mov'],
+    queryFn: () => externalServer.getAll<CashMovement>('cash_mov'),
   });
 
   const createMovement = useMutation({
     mutationFn: async (data: Omit<CashMovement, 'id' | 'created_date'>) => {
       if (isEditing && editingId) {
-        const updatedMovement = await externalServer.updateInExternalDatabase('cash_movements', editingId, data);
+        const updatedMovement = await externalServer.updateInExternalDatabase('cash_mov', editingId, data);
         return updatedMovement;
       } else {
         const newMovement: CashMovement = {
@@ -57,12 +57,12 @@ export default function CashManagement() {
           id: Date.now().toString(), // Temporário, o servidor deve gerar
           created_date: new Date().toISOString(), // Temporário, o servidor deve gerar
         };
-        const savedMovement = await externalServer.saveToExternalDatabase('cash_movements', newMovement);
+        const savedMovement = await externalServer.saveToExternalDatabase('cash_mov', newMovement);
         return savedMovement;
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cash_movements'] });
+      queryClient.invalidateQueries({ queryKey: ['cash_mov'] });
       toast.success(isEditing ? "Movimentação atualizada!" : "Movimentação registrada!");
       setShowForm(false);
       resetForm();
@@ -72,11 +72,11 @@ export default function CashManagement() {
   const deleteMovement = useMutation({
     mutationFn: async (ids: string[]) => {
       for (const id of ids) {
-        await externalServer.deleteFromExternalDatabase('cash_movements', id);
+        await externalServer.deleteFromExternalDatabase('cash_mov', id);
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cash_movements'] });
+      queryClient.invalidateQueries({ queryKey: ['cash_mov'] });
       setSelectedItems([]);
       toast.success("Movimentações excluídas!");
     },

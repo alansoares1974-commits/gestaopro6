@@ -87,8 +87,8 @@ queryFn: async () => {
 
   // Carregar dados da gestão de caixa
   const { data: cashMovements = [] } = useQuery({
-    queryKey: ['cash_movements'],
-    queryFn: () => externalServer.getAll<any>('cash_movements'),
+    queryKey: ['cash_mov'],
+    queryFn: () => externalServer.getAll<any>('cash_mov'),
   });
 
   const totalEntradas = cashMovements.filter((m: any) => m.type === 'entrada').reduce((sum: number, m: any) => sum + m.value, 0);
