@@ -41,7 +41,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 const navigationItems = [
-  { title: "Dashboard", url: createPageUrl("Dashboard"), icon: LayoutDashboard },
+  { title: "Dashboard", url: "/", icon: LayoutDashboard },
   { title: "Relatórios", url: createPageUrl("Reports"), icon: BarChart2 },
   { title: "Gestão de Caixa", url: "/cash-management", icon: Wallet },
   { title: "Produção", url: createPageUrl("Production"), icon: Factory },
@@ -143,30 +143,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild className={`hover:bg-blue-50 hover:text-blue-700 rounded-lg mb-1 ${collapsed ? 'justify-center px-2' : 'px-4'}`}>
-                    <Link to="/user-management-2" className="flex items-center gap-3 py-2.5">
-                      <Users className="w-5 h-5 flex-shrink-0" />
-                      {!collapsed && <span className="font-medium text-sm">Usuários 2</span>}
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild className={`hover:bg-blue-50 hover:text-blue-700 rounded-lg mb-1 ${collapsed ? 'justify-center px-2' : 'px-4'}`}>
-                    <Link to="/products-2" className="flex items-center gap-3 py-2.5">
-                      <Package className="w-5 h-5 flex-shrink-0" />
-                      {!collapsed && <span className="font-medium text-sm">Produtos 2</span>}
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild className={`hover:bg-blue-50 hover:text-blue-700 rounded-lg mb-1 ${collapsed ? 'justify-center px-2' : 'px-4'}`}>
-                    <Link to="/cash-management-3" className="flex items-center gap-3 py-2.5">
-                      <Wallet className="w-5 h-5 flex-shrink-0" />
-                      {!collapsed && <span className="font-medium text-sm">Caixa 3</span>}
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+                
+                
+                
               </>
             )}
             <SidebarMenuItem>

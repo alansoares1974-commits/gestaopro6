@@ -27,11 +27,10 @@ import Employees from "./pages/Employees";
 import Invoices from "./pages/Invoices";
 import Assets from "./pages/Assets";
 import UserManagement from "./pages/UserManagement";
-import UserManagement2 from "./pages/UserManagement2";
+
 import CashManagement from "./pages/CashManagement";
-import CashManagement2 from "./pages/CashManagement2";
-import CashManagement3 from "./pages/CashManagement3";
-import Products2 from "./pages/Products2";
+
+
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
@@ -49,8 +48,7 @@ const App = () => (
               
               
               <Route path="/" element={<Layout><Dashboard /></Layout>} />
-              <Route path="/products" element={<Layout><Products /></Layout>} />
-              
+                          
               <Route path="/sales" element={<Layout><Sales /></Layout>} />
               <Route path="/reports" element={<Layout><Reports /></Layout>} />
               <Route path="/customers" element={<Layout><Customers /></Layout>} />
@@ -65,12 +63,9 @@ const App = () => (
               <Route path="/suppliers" element={<Layout><Suppliers /></Layout>} />
               <Route path="/employees" element={<Layout><Employees /></Layout>} />
               <Route path="/invoices" element={<Layout><Invoices /></Layout>} />
-              <Route path="/assets" element={<Layout><Assets /></Layout>} />
-              <Route path="/cash-management" element={<Layout><CashManagement /></Layout>} />
-              
-              
+                     
               <Route path="/settings" element={<Layout><Settings /></Layout>} />
-              <Route path="/user-management" element={<Layout><UserManagement /></Layout>} />
+           
               
               <Route path="*" element={<NotFound />} />
             </Routes>
