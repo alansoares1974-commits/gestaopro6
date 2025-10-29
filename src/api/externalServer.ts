@@ -1,7 +1,7 @@
 // Cliente para servidor HTTP externo
-const EXTERNAL_SERVER_BASE = ''; // Usaremos o proxy do Vite
-const AUDIO_PATH = 'http://72.60.246.250:8087/audios';
-const DATABASE_PATH = '/api/bancoexterno';
+const EXTERNAL_SERVER_BASE = 'http://72.60.246.250:3000'; // Palpite de porta
+const AUDIO_PATH = `${EXTERNAL_SERVER_BASE}/audios`;
+const DATABASE_PATH = `${EXTERNAL_SERVER_BASE}/bancoexterno`;
 
 export interface AudioFile {
   name: string;
