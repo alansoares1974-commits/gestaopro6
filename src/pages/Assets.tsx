@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { externalServer } from "@/api/externalServer";
+import { getLocalData, saveLocalRecord, deleteLocalRecord } from "@/lib/localPersistence";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -20,11 +20,11 @@ export default function Assets() {
 
   const { data: assets = [] } = useQuery({
     queryKey: ['assets'],
-    queryFn: () => externalServer.getAll<any>('assets'),
+    queryFn: () => getLocalData('assets'),
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: any) => externalServer.saveToExternalDatabase('assets', data),
+    mutationFn: (data: any) => saveLocalRecord('assets', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assets'] });
       toast.success("Ativo cadastrado com sucesso!");
@@ -33,7 +33,7 @@ export default function Assets() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => externalServer.updateInExternalDatabase('assets', id, data),
+    mutationFn: ({ id, data }: { id: string; data: any }) => saveLocalRecord('assets', { ...data, id }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assets'] });
       toast.success("Ativo atualizado com sucesso!");
@@ -43,7 +43,7 @@ export default function Assets() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => externalServer.deleteFromExternalDatabase('assets', id),
+    mutationFn: (id: string) => deleteLocalRecord('assets', id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assets'] });
       toast.success("Ativo excluído com sucesso!");
@@ -61,7 +61,7 @@ export default function Assets() {
 
   const deleteSelectedMutation = useMutation({
     mutationFn: async (ids: string[]) => {
-      await Promise.all(ids.map(id => externalServer.deleteFromExternalDatabase('assets', id)));
+      await Promise.all(ids.map(id => deleteLocalRecord('assets', id)));
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assets'] });

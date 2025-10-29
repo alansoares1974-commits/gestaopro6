@@ -2,8 +2,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./contexts/AuthContext";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { SoundAlertProvider } from "./contexts/SoundAlertContext";
 
 
@@ -33,8 +33,41 @@ import CashManagement from "./pages/CashManagement";
 
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import Login from "./pages/Login";
 
 const queryClient = new QueryClient();
+
+const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated } = useAuth();
+  return isAuthenticated ? children : <Navigate to="/login" />;
+};
+
+const AppRoutes = () => (
+  <Routes>
+    <Route path="/login" element={<Login />} />
+    <Route path="/" element={<PrivateRoute><Layout><Dashboard /></Layout></PrivateRoute>} />
+    <Route path="/products" element={<PrivateRoute><Layout><Products /></Layout></PrivateRoute>} />
+    <Route path="/sales" element={<PrivateRoute><Layout><Sales /></Layout></PrivateRoute>} />
+    <Route path="/reports" element={<PrivateRoute><Layout><Reports /></Layout></PrivateRoute>} />
+    <Route path="/customers" element={<PrivateRoute><Layout><Customers /></Layout></PrivateRoute>} />
+    <Route path="/materials" element={<PrivateRoute><Layout><Materials /></Layout></PrivateRoute>} />
+    <Route path="/services" element={<PrivateRoute><Layout><Services /></Layout></PrivateRoute>} />
+    <Route path="/expenses" element={<PrivateRoute><Layout><Expenses /></Layout></PrivateRoute>} />
+    <Route path="/production" element={<PrivateRoute><Layout><Production /></Layout></PrivateRoute>} />
+    <Route path="/production-display" element={<PrivateRoute><ProductionDisplay /></PrivateRoute>} />
+    <Route path="/monitor-display" element={<PrivateRoute><MonitorDisplay /></PrivateRoute>} />
+    <Route path="/products-to-restock" element={<PrivateRoute><ProductsToRestock /></PrivateRoute>} />
+    <Route path="/marketplace-orders" element={<PrivateRoute><Layout><MarketplaceOrders /></Layout></PrivateRoute>} />
+    <Route path="/suppliers" element={<PrivateRoute><Layout><Suppliers /></Layout></PrivateRoute>} />
+    <Route path="/employees" element={<PrivateRoute><Layout><Employees /></Layout></PrivateRoute>} />
+    <Route path="/invoices" element={<PrivateRoute><Layout><Invoices /></Layout></PrivateRoute>} />
+    <Route path="/assets" element={<PrivateRoute><Layout><Assets /></Layout></PrivateRoute>} />
+    <Route path="/cash-management" element={<PrivateRoute><Layout><CashManagement /></Layout></PrivateRoute>} />
+    <Route path="/settings" element={<PrivateRoute><Layout><Settings /></Layout></PrivateRoute>} />
+    <Route path="/user-management" element={<PrivateRoute><Layout><UserManagement /></Layout></PrivateRoute>} />
+    <Route path="*" element={<NotFound />} />
+  </Routes>
+);
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -45,32 +78,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
-              
-              
-              <Route path="/" element={<Layout><Dashboard /></Layout>} />
-              <Route path="/products" element={<Layout><Products /></Layout>} />
-              <Route path="/sales" element={<Layout><Sales /></Layout>} />
-              <Route path="/reports" element={<Layout><Reports /></Layout>} />
-              <Route path="/customers" element={<Layout><Customers /></Layout>} />
-              <Route path="/materials" element={<Layout><Materials /></Layout>} />
-              <Route path="/services" element={<Layout><Services /></Layout>} />
-              <Route path="/expenses" element={<Layout><Expenses /></Layout>} />
-              <Route path="/production" element={<Layout><Production /></Layout>} />
-              <Route path="/production-display" element={<ProductionDisplay />} />
-              <Route path="/monitor-display" element={<MonitorDisplay />} />
-              <Route path="/products-to-restock" element={<ProductsToRestock />} />
-              <Route path="/marketplace-orders" element={<Layout><MarketplaceOrders /></Layout>} />
-              <Route path="/suppliers" element={<Layout><Suppliers /></Layout>} />
-              <Route path="/employees" element={<Layout><Employees /></Layout>} />
-              <Route path="/invoices" element={<Layout><Invoices /></Layout>} />
-              <Route path="/assets" element={<Layout><Assets /></Layout>} />
-              <Route path="/cash-management" element={<Layout><CashManagement /></Layout>} />
-              
-              
-              <Route path="/settings" element={<Layout><Settings /></Layout>} />
-              <Route path="/user-management" element={<Layout><UserManagement /></Layout>} />
-              
-              <Route path="*" element={<NotFound />} />
+              <AppRoutes />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>

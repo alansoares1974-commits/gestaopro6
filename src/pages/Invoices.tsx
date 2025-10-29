@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { externalServer } from "@/api/externalServer";
+import { getLocalData, saveLocalRecord, deleteLocalRecord } from "@/lib/localPersistence";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -18,16 +18,16 @@ export default function Invoices() {
 
   const { data: invoices = [] } = useQuery({
     queryKey: ['invoices'],
-    queryFn: () => externalServer.getAll<any>('invoices'),
+    queryFn: () => getLocalData('invoices'),
   });
 
   const { data: suppliers = [] } = useQuery({
     queryKey: ['suppliers'],
-    queryFn: () => externalServer.getAll<any>('suppliers'),
+    queryFn: () => getLocalData('suppliers'),
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: any) => externalServer.saveToExternalDatabase('invoices', data),
+    mutationFn: (data: any) => saveLocalRecord('invoices', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
       toast.success("Nota fiscal cadastrada com sucesso!");
@@ -36,7 +36,7 @@ export default function Invoices() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => externalServer.updateInExternalDatabase('invoices', id, data),
+    mutationFn: ({ id, data }: { id: string; data: any }) => saveLocalRecord('invoices', { ...data, id }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
       toast.success("Nota fiscal atualizada com sucesso!");
@@ -46,7 +46,7 @@ export default function Invoices() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => externalServer.deleteFromExternalDatabase('invoices', id),
+    mutationFn: (id: string) => deleteLocalRecord('invoices', id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
       toast.success("Nota fiscal excluída com sucesso!");

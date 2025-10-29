@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Wallet, TrendingUp, TrendingDown, Filter, Upload, Copy, Trash2, Edit } from "lucide-react";
 import { toast } from "sonner";
-import { externalServer } from "@/api/externalServer";
+import { getLocalData, saveLocalRecord, deleteLocalRecord } from "@/lib/localPersistence";
 
 interface CashMovement {
   id: string;
@@ -43,13 +43,13 @@ export default function CashManagement() {
   // Buscar movimentos do servidor externo
   const { data: movements = [], isLoading } = useQuery({
     queryKey: ['cash_mov'],
-    queryFn: () => externalServer.getAll<CashMovement>('cash_mov'),
+    queryFn: () => getLocalData('cash_mov'),
   });
 
   const createMovement = useMutation({
     mutationFn: async (data: Omit<CashMovement, 'id' | 'created_date'>) => {
       if (isEditing && editingId) {
-        const updatedMovement = await externalServer.updateInExternalDatabase('cash_mov', editingId, data);
+        const updatedMovement = saveLocalRecord('cash_mov', { ...data, id: editingId });
         return updatedMovement;
       } else {
         const newMovement: CashMovement = {
@@ -57,7 +57,7 @@ export default function CashManagement() {
           id: Date.now().toString(), // Temporário, o servidor deve gerar
           created_date: new Date().toISOString(), // Temporário, o servidor deve gerar
         };
-        const savedMovement = await externalServer.saveToExternalDatabase('cash_mov', newMovement);
+        const savedMovement = saveLocalRecord('cash_mov', newMovement);
         return savedMovement;
       }
     },
@@ -72,7 +72,7 @@ export default function CashManagement() {
   const deleteMovement = useMutation({
     mutationFn: async (ids: string[]) => {
       for (const id of ids) {
-        await externalServer.deleteFromExternalDatabase('cash_mov', id);
+        deleteLocalRecord('cash_mov', id);
       }
     },
     onSuccess: () => {

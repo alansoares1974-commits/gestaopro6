@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { externalServer } from "@/api/externalServer";
+import { getLocalData, saveLocalRecord, deleteLocalRecord } from "@/lib/localPersistence";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -21,11 +21,11 @@ export default function Products() {
 
   const { data: products = [] } = useQuery({
     queryKey: ['products'],
-    queryFn: () => externalServer.getAll<any>('products'),
+    queryFn: () => getLocalData('products'),
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => externalServer.saveToExternalDatabase('products', data),
+    mutationFn: (data) => saveLocalRecord('products', data),
     onSuccess: (created: any, variables: any) => {
       // Salva meta local (componentes e itens detalhados)
       const newId = created?.id;
@@ -46,7 +46,7 @@ export default function Products() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => externalServer.updateInExternalDatabase('products', id, data),
+    mutationFn: ({ id, data }: { id: string; data: any }) => saveLocalRecord('products', { ...data, id }),
     onSuccess: (_resp: any, variables: { id: string; data: any }) => {
       // Atualiza meta local
       if (variables?.id) {
@@ -66,7 +66,7 @@ export default function Products() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => externalServer.deleteFromExternalDatabase('products', id),
+    mutationFn: (id: string) => deleteLocalRecord('products', id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
       toast.success("Produto excluído!");
@@ -75,7 +75,7 @@ export default function Products() {
 
   const deleteSelectedMutation = useMutation({
     mutationFn: async (ids: string[]) => {
-      await Promise.all(ids.map(id => externalServer.deleteFromExternalDatabase('products', id)));
+      await Promise.all(ids.map(id => deleteLocalRecord('products', id)));
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });

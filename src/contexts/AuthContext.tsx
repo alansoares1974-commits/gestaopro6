@@ -39,23 +39,31 @@ const FAKE_USER: User = {
   permissions: []
 };
 
-const DEFAULT_USERS = []; // Remove a inicialização de usuários no frontend, pois o backend cuida disso
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  // Inicializa o usuário como o FAKE_USER para ignorar o login
-  const [user, setUser] = useState<User | null>(FAKE_USER);
+  const [user, setUser] = useState<User | null>(() => {
+    const storedUser = localStorage.getItem('current_user');
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
 
-  // Remove o useEffect de inicialização para evitar conflitos com o login forçado
   useEffect(() => {
-    // Força o usuário a ser o FAKE_USER e armazena no localStorage
-    setUser(FAKE_USER);
-    localStorage.setItem('current_user', JSON.stringify(FAKE_USER));
-  }, []);
+    // Se o usuário estiver logado, garante que o localStorage esteja atualizado
+    if (user) {
+      localStorage.setItem('current_user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('current_user');
+    }
+  }, [user]);
 
-// A função de login é mantida, mas não será mais usada.
   const login = async (username: string, password: string): Promise<boolean> => {
-    // Simulação de sucesso para evitar erros no código que chama login
-    return true;
+    // Lógica de autenticação local: admin/suporte@1
+    if (username === 'admin' && password === 'suporte@1') {
+      const authenticatedUser: User = { username: 'admin', role: 'admin', permissions: [] };
+      setUser(authenticatedUser);
+      // O useEffect cuidará de salvar no localStorage
+      return true;
+    }
+    return false;
   };
 
   const hasPermission = (permission: Permission): boolean => {
