@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { externalServer } from "@/api/externalServer";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -21,19 +21,11 @@ export default function Products() {
 
   const { data: products = [] } = useQuery({
     queryKey: ['products'],
-    queryFn: async () => {
-      const data = await base44.entities.Product.list();
-      // Ordenar localmente por data de criação (mais recente primeiro)
-      return data.sort((a: any, b: any) => {
-        const dateA = new Date(a.created_date).getTime();
-        const dateB = new Date(b.created_date).getTime();
-        return dateB - dateA;
-      });
-    },
+    queryFn: () => externalServer.getAll<any>('products'),
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Product.create(data),
+    mutationFn: (data) => externalServer.saveToExternalDatabase('products', data),
     onSuccess: (created: any, variables: any) => {
       // Salva meta local (componentes e itens detalhados)
       const newId = created?.id;
@@ -54,7 +46,7 @@ export default function Products() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => base44.entities.Product.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: any }) => externalServer.updateInExternalDatabase('products', id, data),
     onSuccess: (_resp: any, variables: { id: string; data: any }) => {
       // Atualiza meta local
       if (variables?.id) {
@@ -74,7 +66,7 @@ export default function Products() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => base44.entities.Product.delete(id),
+    mutationFn: (id: string) => externalServer.deleteFromExternalDatabase('products', id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
       toast.success("Produto excluído!");
@@ -83,7 +75,7 @@ export default function Products() {
 
   const deleteSelectedMutation = useMutation({
     mutationFn: async (ids: string[]) => {
-      await Promise.all(ids.map(id => base44.entities.Product.delete(id)));
+      await Promise.all(ids.map(id => externalServer.deleteFromExternalDatabase('products', id)));
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });

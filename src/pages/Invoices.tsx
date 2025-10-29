@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { externalServer } from "@/api/externalServer";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -18,16 +18,16 @@ export default function Invoices() {
 
   const { data: invoices = [] } = useQuery({
     queryKey: ['invoices'],
-    queryFn: () => base44.entities.Invoice.list(),
+    queryFn: () => externalServer.getAll<any>('invoices'),
   });
 
   const { data: suppliers = [] } = useQuery({
     queryKey: ['suppliers'],
-    queryFn: () => base44.entities.Supplier.list(),
+    queryFn: () => externalServer.getAll<any>('suppliers'),
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: any) => base44.entities.Invoice.create(data),
+    mutationFn: (data: any) => externalServer.saveToExternalDatabase('invoices', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
       toast.success("Nota fiscal cadastrada com sucesso!");
@@ -36,7 +36,7 @@ export default function Invoices() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => base44.entities.Invoice.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: any }) => externalServer.updateInExternalDatabase('invoices', id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
       toast.success("Nota fiscal atualizada com sucesso!");
@@ -46,7 +46,7 @@ export default function Invoices() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => base44.entities.Invoice.delete(id),
+    mutationFn: (id: string) => externalServer.deleteFromExternalDatabase('invoices', id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
       toast.success("Nota fiscal excluída com sucesso!");

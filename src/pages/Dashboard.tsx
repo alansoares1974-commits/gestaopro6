@@ -3,6 +3,7 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { externalServer } from "@/api/externalServer";
 import { DollarSign, TrendingUp, ShoppingCart, Wrench, AlertTriangle, BarChart2, Receipt, ChevronRight, Monitor, Wallet } from "lucide-react";
 import StatsCard from "../components/dashboard/StatsCard";
 import TopProductsChart from "../components/dashboard/TopProductsChart";
@@ -18,9 +19,8 @@ import { toast } from "sonner";
 export default function Dashboard() {
   const { data: sales = [] } = useQuery({
     queryKey: ['sales'],
-    queryFn: async () => {
-      const response = await fetch("/api/sales");
-      const data = await response.json();
+queryFn: async () => {
+      const data = await externalServer.getAll<any>('sales');
       return data.sort((a: any, b: any) => {
         const dateA = new Date(a.created_date || a.sale_date).getTime();
         const dateB = new Date(b.created_date || b.sale_date).getTime();
@@ -31,17 +31,13 @@ export default function Dashboard() {
 
   const { data: products = [] } = useQuery({
     queryKey: ['products'],
-    queryFn: async () => {
-      const response = await fetch("/api/products");
-      return await response.json();
-    },
+    queryFn: () => externalServer.getAll<any>('products'),
   });
 
   const { data: services = [] } = useQuery({
     queryKey: ['services'],
     queryFn: async () => {
-      const response = await fetch("/api/services");
-      const data = await response.json();
+      const data = await externalServer.getAll<any>('services');
       return data.sort((a: any, b: any) => {
         const dateA = new Date(a.created_date || a.service_date).getTime();
         const dateB = new Date(b.created_date || b.service_date).getTime();
@@ -52,17 +48,13 @@ export default function Dashboard() {
 
   const { data: materials = [] } = useQuery({
     queryKey: ['materials'],
-    queryFn: async () => {
-      const response = await fetch("/api/materials");
-      return await response.json();
-    },
+    queryFn: () => externalServer.getAll<any>('materials'),
   });
 
   const { data: expenses = [] } = useQuery({
     queryKey: ['expenses'],
     queryFn: async () => {
-      const response = await fetch("/api/expenses");
-      const data = await response.json();
+      const data = await externalServer.getAll<any>('expenses');
       return data.sort((a: any, b: any) => {
         const dateA = new Date(a.created_date || a.payment_date).getTime();
         const dateB = new Date(b.created_date || b.payment_date).getTime();
@@ -94,19 +86,14 @@ export default function Dashboard() {
   const lowStockMaterials = materials.filter(m => (m.quantity || 0) <= (m.minimum_quantity || 0));
 
   // Carregar dados da gestão de caixa
-  const { data: cashData } = useQuery({
-    queryKey: ['cash-management'],
-    queryFn: async () => {
-      const response = await fetch("/api/cash-management");
-      return await response.json();
-    }
+  const { data: cashMovements = [] } = useQuery({
+    queryKey: ['cash_movements'],
+    queryFn: () => externalServer.getAll<any>('cash_movements'),
   });
 
-  const cashMovements = cashData?.transactions || [];
-  
-  const totalEntradas = cashMovements.filter((m: any) => m.type === 'Entrada').reduce((sum: number, m: any) => sum + m.amount, 0);
-  const totalSaidas = cashMovements.filter((m: any) => m.type === 'Saída').reduce((sum: number, m: any) => sum + m.amount, 0);
-  const saldoEmCaixa = cashData?.balance || 0;
+  const totalEntradas = cashMovements.filter((m: any) => m.type === 'entrada').reduce((sum: number, m: any) => sum + m.value, 0);
+  const totalSaidas = cashMovements.filter((m: any) => m.type === 'saida').reduce((sum: number, m: any) => sum + m.value, 0);
+  const saldoEmCaixa = totalEntradas - totalSaidas;
 
   const productSales: Record<string, number> = {};
   sales.forEach(sale => {
