@@ -3,7 +3,6 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { externalServer } from "@/api/externalServer";
 import { DollarSign, TrendingUp, ShoppingCart, Wrench, AlertTriangle, BarChart2, Receipt, ChevronRight, Monitor, Wallet } from "lucide-react";
 import StatsCard from "../components/dashboard/StatsCard";
 import TopProductsChart from "../components/dashboard/TopProductsChart";
@@ -20,7 +19,6 @@ export default function Dashboard() {
   const { data: sales = [] } = useQuery({
     queryKey: ['sales'],
 queryFn: async () => {
-      const data = await externalServer.getAll<any>('sales');
       return data.sort((a: any, b: any) => {
         const dateA = new Date(a.created_date || a.sale_date).getTime();
         const dateB = new Date(b.created_date || b.sale_date).getTime();
@@ -31,13 +29,11 @@ queryFn: async () => {
 
   const { data: products = [] } = useQuery({
     queryKey: ['products'],
-    queryFn: () => externalServer.getAll<any>('products'),
   });
 
   const { data: services = [] } = useQuery({
     queryKey: ['services'],
     queryFn: async () => {
-      const data = await externalServer.getAll<any>('services');
       return data.sort((a: any, b: any) => {
         const dateA = new Date(a.created_date || a.service_date).getTime();
         const dateB = new Date(b.created_date || b.service_date).getTime();
@@ -48,13 +44,11 @@ queryFn: async () => {
 
   const { data: materials = [] } = useQuery({
     queryKey: ['materials'],
-    queryFn: () => externalServer.getAll<any>('materials'),
   });
 
   const { data: expenses = [] } = useQuery({
     queryKey: ['expenses'],
     queryFn: async () => {
-      const data = await externalServer.getAll<any>('expenses');
       return data.sort((a: any, b: any) => {
         const dateA = new Date(a.created_date || a.payment_date).getTime();
         const dateB = new Date(b.created_date || b.payment_date).getTime();
@@ -88,7 +82,6 @@ queryFn: async () => {
   // Carregar dados da gestão de caixa
   const { data: cashMovements = [] } = useQuery({
     queryKey: ['cash_mov'],
-    queryFn: () => externalServer.getAll<any>('cash_mov'),
   });
 
   const totalEntradas = cashMovements.filter((m: any) => m.type === 'entrada').reduce((sum: number, m: any) => sum + m.value, 0);

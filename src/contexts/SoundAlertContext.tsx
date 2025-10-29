@@ -1,5 +1,4 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { externalServer } from '@/api/externalServer';
 
 type AlertMode = 'disabled' | 'on-order' | 'interval';
 type AlertType = 'new-order' | 'order-completed' | 'low-stock';
@@ -65,7 +64,6 @@ export function SoundAlertProvider({ children }: { children: ReactNode }) {
 
     if (audioSourcePref === 'server') {
       try {
-        const audioUrl = await externalServer.getAudio(audioMap[type]);
         const audio = new Audio();
         audio.crossOrigin = 'anonymous';
         audio.src = audioUrl;

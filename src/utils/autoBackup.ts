@@ -1,5 +1,4 @@
 // Sistema de backup automático diário
-import { externalServer } from '@/api/externalServer';
 
 class AutoBackupManager {
   private backupInterval: NodeJS.Timeout | null = null;
@@ -42,7 +41,6 @@ class AutoBackupManager {
 
       // Tentar salvar no servidor externo
       try {
-        await externalServer.createBackup();
         console.log('Backup salvo no servidor externo');
       } catch (serverError) {
         console.warn('Erro ao salvar no servidor, salvando localmente:', serverError);
@@ -171,13 +169,6 @@ class AutoBackupManager {
   }
 
   // Buscar backup do servidor
-  private async getBackupFromServer(timestamp: string): Promise<any> {
-    const response = await fetch(`http://72.60.246.250:8087/bancoexterno/backups/${timestamp}`);
-    if (!response.ok) {
-      throw new Error('Backup não encontrado no servidor');
-    }
-    return await response.json();
-  }
 
   // Aplicar dados do backup
   private applyBackupData(data: any) {

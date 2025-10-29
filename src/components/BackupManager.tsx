@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Database, Download, Upload, RefreshCw, Check, AlertCircle } from 'lucide-react';
 import { autoBackupManager } from '@/utils/autoBackup';
-import { externalServerSync } from '@/utils/externalServerSync';
+import { autoSync } from '@/utils/autoSync';
 import { toast } from 'sonner';
 
 export function BackupManager() {
@@ -57,7 +57,7 @@ export function BackupManager() {
   const handleSync = async () => {
     setSyncing(true);
     try {
-      await externalServerSync.performSync();
+      await autoSync.performSync();
       toast.success('Sincronização concluída!');
     } catch (error) {
       toast.error('Erro na sincronização');
