@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => ({
       '/api/bancoexterno': {
         target: 'http://72.60.246.250:8087',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
+        rewrite: (path) => path.replace(/^\/api\/bancoexterno/, ''),
       },
     },
   },
