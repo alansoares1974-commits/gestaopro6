@@ -1,7 +1,7 @@
 // Cliente para servidor HTTP externo
-const EXTERNAL_SERVER_BASE = ''; // Usaremos o proxy do Vite
+const EXTERNAL_SERVER_BASE = 'http://72.60.246.250:9091';
 const AUDIO_PATH = `${EXTERNAL_SERVER_BASE}/audios`;
-const DATABASE_PATH = `/api/bancoexterno`;
+const DATABASE_PATH = `${EXTERNAL_SERVER_BASE}/bancoexterno`;
 
 export interface AudioFile {
   name: string;
@@ -25,8 +25,7 @@ class ExternalServerClient {
   // Buscar áudio do servidor (sem HEAD para evitar bloqueio mixed-content/CORS)
   async getAudio(audioName: string): Promise<string> {
     // Retorna diretamente a URL do servidor
-    // Nota: O áudio pode ainda precisar de CORS se for carregado diretamente pelo navegador
-    return `http://72.60.246.250:8087/audios/${audioName}`;
+    return `${AUDIO_PATH}/${audioName}`;
   }
 
   // Lista todos os áudios disponíveis
