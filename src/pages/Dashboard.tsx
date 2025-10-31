@@ -17,8 +17,16 @@ import { toast } from "sonner";
 
 export default function Dashboard() {
   const { data: sales = [] } = useQuery({
+<<<<<<< HEAD
     queryKey: ['sales'],
 queryFn: async () => {
+=======
+   queryKey: ['sales'],
+      staleTime: 1000 * 60 * 5, // 5 minutos,
+      queryFn: async () => {
+      const response = await fetch("/api/sales");
+      const data = await response.json();
+>>>>>>> 01f53d0a (Correção Final: Cache do Dashboard e remoção de rotas duplicadas)
       return data.sort((a: any, b: any) => {
         const dateA = new Date(a.created_date || a.sale_date).getTime();
         const dateB = new Date(b.created_date || b.sale_date).getTime();
@@ -28,12 +36,28 @@ queryFn: async () => {
   });
 
   const { data: products = [] } = useQuery({
+<<<<<<< HEAD
     queryKey: ['products'],
+=======
+   queryKey: ['products'],
+      staleTime: 1000 * 60 * 5, // 5 minutos,
+      queryFn: async () => {
+      const response = await fetch("/api/products");
+      return await response.json();
+    },
+>>>>>>> 01f53d0a (Correção Final: Cache do Dashboard e remoção de rotas duplicadas)
   });
 
   const { data: services = [] } = useQuery({
     queryKey: ['services'],
+<<<<<<< HEAD
     queryFn: async () => {
+=======
+      staleTime: 1000 * 60 * 5, // 5 minutos,
+      queryFn: async () => {
+      const response = await fetch("/api/services");
+      const data = await response.json();
+>>>>>>> 01f53d0a (Correção Final: Cache do Dashboard e remoção de rotas duplicadas)
       return data.sort((a: any, b: any) => {
         const dateA = new Date(a.created_date || a.service_date).getTime();
         const dateB = new Date(b.created_date || b.service_date).getTime();
@@ -44,11 +68,27 @@ queryFn: async () => {
 
   const { data: materials = [] } = useQuery({
     queryKey: ['materials'],
+<<<<<<< HEAD
   });
 
   const { data: expenses = [] } = useQuery({
     queryKey: ['expenses'],
     queryFn: async () => {
+=======
+      staleTime: 1000 * 60 * 5, // 5 minutos,
+      queryFn: async () => {
+      const response = await fetch("/api/materials");
+      return await response.json();
+    },
+  });
+
+  const { data: expenses = [] } = useQuery({
+  queryKey: ['expenses'],
+      staleTime: 1000 * 60 * 5, // 5 minutos,
+      queryFn: async () => {
+      const response = await fetch("/api/expenses");
+      const data = await response.json();
+>>>>>>> 01f53d0a (Correção Final: Cache do Dashboard e remoção de rotas duplicadas)
       return data.sort((a: any, b: any) => {
         const dateA = new Date(a.created_date || a.payment_date).getTime();
         const dateB = new Date(b.created_date || b.payment_date).getTime();
@@ -80,8 +120,18 @@ queryFn: async () => {
   const lowStockMaterials = materials.filter(m => (m.quantity || 0) <= (m.minimum_quantity || 0));
 
   // Carregar dados da gestão de caixa
+<<<<<<< HEAD
   const { data: cashMovements = [] } = useQuery({
     queryKey: ['cash_mov'],
+=======
+  const { data: cashData } = useQuery({
+   queryKey: ['cash-management'],
+      staleTime: 1000 * 60 * 5, // 5 minutos,
+      queryFn: async () => {
+      const response = await fetch("/api/cash-management");
+      return await response.json();
+    }
+>>>>>>> 01f53d0a (Correção Final: Cache do Dashboard e remoção de rotas duplicadas)
   });
 
   const totalEntradas = cashMovements.filter((m: any) => m.type === 'entrada').reduce((sum: number, m: any) => sum + m.value, 0);
